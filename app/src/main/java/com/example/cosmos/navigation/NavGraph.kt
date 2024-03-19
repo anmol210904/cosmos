@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.cosmos.MainScreenView
 import com.example.cosmos.presentation.AppPostScreen.AddPostScreen
 import com.example.cosmos.presentation.Auth.SignInScreen
 import com.example.cosmos.presentation.Auth.SignUpScreen
@@ -19,15 +20,15 @@ import com.google.firebase.auth.auth
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     NavHost(navController = navHostController,
-        startDestination = if(Firebase.auth.currentUser.toString() != "")NavItem.Home.screen_route else NavItem.Auth_Login.screen_route){
+        startDestination = if(Firebase.auth.currentUser != null)NavItem.Main.screen_route else NavItem.Auth_Login.screen_route){
         composable(NavItem.Home.screen_route){
-            HomeScreen()
+            HomeScreen(navHostController)
         }
         composable(NavItem.Apod.screen_route){
             ApodScreen(navHostController)
         }
         composable(NavItem.Profile.screen_route){
-            ProfileScreen()
+            ProfileScreen(navHostController)
         }
         composable(NavItem.Auth_Login.screen_route){
             SignInScreen(navHostController)
@@ -39,6 +40,9 @@ fun NavGraph(navHostController: NavHostController) {
 
         composable(NavItem.Add_Post.screen_route){
             AddPostScreen(navHostController)
+        }
+        composable(NavItem.Main.screen_route){
+            MainScreenView(navHostController)
         }
     }
 }

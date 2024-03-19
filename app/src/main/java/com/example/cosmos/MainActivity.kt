@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.cosmos.navigation.BottomNavGraph
 import com.example.cosmos.navigation.BottomNavigation
 import com.example.cosmos.navigation.NavGraph
 import com.example.cosmos.ui.theme.CosmosTheme
@@ -32,7 +33,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 //                    Greeting("Android")
-                    MainScreenView()
+                    val navHostController = rememberNavController()
+
+                    NavGraph(navHostController = navHostController)
+                    
 
 
                 }
@@ -62,12 +66,14 @@ fun GreetingPreview() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-fun MainScreenView(){
-    val navController = rememberNavController()
-    Scaffold(
-        bottomBar = { BottomNavigation(navHostController = navController) }
-    ) {
+fun MainScreenView(navHostController: NavHostController) {
+    
+    val bottomNavHostController = rememberNavController()
 
-        NavGraph(navHostController = navController)
+    Scaffold(
+        bottomBar = { BottomNavigation(navHostController = bottomNavHostController) }
+    ) {
+        BottomNavGraph(navHostController = bottomNavHostController, mainNavController = navHostController)
     }
+    
 }

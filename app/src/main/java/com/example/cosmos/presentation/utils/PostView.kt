@@ -39,7 +39,7 @@ fun PostView(post: PostModel = PostModel()) {
             .fillMaxWidth()
 
             .clip(RoundedCornerShape(16.dp))
-            .background(color = colorResource(id = R.color.postColor))
+//            .background(color = colorResource(id = R.color.postColor))
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

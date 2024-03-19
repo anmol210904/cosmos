@@ -3,6 +3,7 @@ package com.example.cosmos.presentation.utils
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
@@ -40,7 +41,9 @@ fun GlobalTextField(
                 )
             }
         },
-        modifier = modifier
+        modifier = modifier,
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp)
         )
 
 

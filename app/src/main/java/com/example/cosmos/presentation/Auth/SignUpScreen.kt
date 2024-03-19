@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Create
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -54,7 +51,7 @@ fun SignUpScreen(navHostController: NavHostController = rememberNavController())
     data.let {
         when (it) {
             "Success" -> {
-                navHostController.navigate(NavItem.Home.screen_route) {
+                navHostController.navigate(NavItem.Main.screen_route) {
                     popUpTo(0)
                 }
             }
@@ -88,10 +85,8 @@ fun SignUpScreen(navHostController: NavHostController = rememberNavController())
         Button(onClick = {
             viewModel.signUp(email.value, userName.value, pass.value, name.value)
         }, modifier = Modifier.width(200.dp)) {
-            if(!loading.value){
+            if (!loading.value) {
                 Text(text = "SignUp", modifier = Modifier.padding(horizontal = 16.dp))
-            }else{
-
             }
 
         }

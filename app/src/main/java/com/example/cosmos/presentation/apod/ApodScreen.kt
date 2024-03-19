@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,7 +60,7 @@ fun ApodScreen(navHostController: NavHostController = rememberNavController()) {
         modifier = Modifier
             .fillMaxSize(1f)
 
-            .background(color = colorResource(id = R.color.background))
+//            .background(color = colorResource(id = R.color.background))
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -71,6 +72,7 @@ fun ApodScreen(navHostController: NavHostController = rememberNavController()) {
                 items(data!!){
                     Post1(it)
                     Spacer(modifier = Modifier.height(8.dp))
+                    Divider()
 
                 }
             }

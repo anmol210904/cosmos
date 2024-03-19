@@ -13,20 +13,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.cosmos.presentation.utils.PostView
-import com.example.cosmos.viewModel.ApodViewModel
 import com.example.cosmos.viewModel.GetPostViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(){
+fun HomeScreen(mainNavController: NavHostController) {
 
     val viewModel = koinViewModel<GetPostViewModel>()
 
@@ -41,13 +41,15 @@ fun HomeScreen(){
     if(data != null){
         Column (modifier = Modifier
             .fillMaxSize(1f)
-            .background(color = colorResource(id = R.color.background))
+//            .background(color = colorResource(id = R.color.background))
             .padding(16.dp)){
             LazyColumn {
                 items(data!!){
                     PostView(it)
                     Spacer(modifier = Modifier.size(8.dp))
+                    Divider()
                 }
+
             }
         }
     }

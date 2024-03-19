@@ -43,7 +43,7 @@ fun Post1(data: ApodResponseClass = ApodResponseClass(), onClick: () -> Unit = {
             .fillMaxWidth()
 
             .clip(RoundedCornerShape(16.dp))
-            .background(color = colorResource(id = R.color.postColor))
+//            .background(color = colorResource(id = R.color.postColor))
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

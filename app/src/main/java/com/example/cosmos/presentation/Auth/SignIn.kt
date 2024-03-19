@@ -52,7 +52,7 @@ fun SignInScreen(navHostController: NavHostController = rememberNavController())
     data.let {
         when(it){
              "Success" ->{
-                navHostController.navigate(NavItem.Home.screen_route){
+                navHostController.navigate(NavItem.Main.screen_route){
                     popUpTo(0)
                 }
             }

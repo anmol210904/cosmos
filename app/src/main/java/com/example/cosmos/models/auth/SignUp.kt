@@ -3,7 +3,7 @@ package com.example.cosmos.models.auth
 class SignUpModel() {
     var name: String = ""
     var username: String = ""
-    var posts: ArrayList<String> = arrayListOf()
+    var posts = 0;
     var UID: String = ""
     var img : String = "https://apod.nasa.gov/apod/image/2401/PlutoTrueColor_NewHorizons_960.jpg"
 
