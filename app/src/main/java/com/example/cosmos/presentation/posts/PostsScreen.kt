@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -72,7 +73,8 @@ fun PostsScreen(
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .wrapContentHeight()
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
 
@@ -137,8 +139,9 @@ fun PostsScreen(
             AsyncImage(
                 model = post?.img, contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .clip(RoundedCornerShape(16.dp))
+                    .height(400.dp)
+                    .wrapContentWidth()
+                    .clip(RoundedCornerShape(8.dp))
             )
 
 

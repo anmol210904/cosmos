@@ -48,7 +48,7 @@ fun HomeScreen(mainNavController: NavHostController) {
         Column (modifier = Modifier
             .fillMaxSize(1f)
 //            .background(color = colorResource(id = R.color.background))
-            .padding(16.dp)){
+            .padding(16.dp).padding(bottom = 32.dp)){
             LazyColumn(state = liststate) {
                 if(data != null){
                     items(data!!){

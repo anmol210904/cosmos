@@ -1,6 +1,5 @@
 package com.example.cosmos.presentation.profile
 
-import android.content.res.Resources.Theme
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -28,8 +27,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,10 +54,7 @@ import org.koin.androidx.compose.koinViewModel
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreen(mainNavController: NavHostController = rememberNavController()) {
-//    LaunchedEffect(key1 = Unit) {
-//        Firebase.auth.signOut()
-//
-//    }
+
 
 
     val viewModel = koinViewModel<ProfileViewModel>()
@@ -112,7 +105,7 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
                     Icon(
                         imageVector = Icons.Rounded.MoreVert,
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(32.dp)
                     )
 
                 }

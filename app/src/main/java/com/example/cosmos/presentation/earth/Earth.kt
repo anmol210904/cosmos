@@ -89,22 +89,25 @@ fun EarthScreen(
 
         //latitide input
 
-        GlobalTextField(
-            text = lat,
-            label = "Latitude",
-            leadingIconInt = R.drawable.latitude
-        )
-
-        Spacer(modifier = Modifier.size(24.dp))
-
-
-        //longitude input 
 
         GlobalTextField(
             text = long,
             label = "Longitude",
             leadingIconInt = R.drawable.longitude
         )
+
+        Spacer(modifier = Modifier.size(24.dp))
+
+        GlobalTextField(
+            text = lat,
+            label = "Latitude",
+            leadingIconInt = R.drawable.latitude
+        )
+
+
+        //longitude input 
+
+
 
         Spacer(modifier = Modifier.size(24.dp))
 
@@ -138,7 +141,7 @@ fun EarthScreen(
                 .fillMaxWidth(1f)
                 .padding(horizontal = 64.dp),
             onClick = {
-                viewModel.getData(long.value,lat.value,date.value)
+                viewModel.getData(longitude = long.value, latitude = lat.value,date=date.value)
             }
         ) {
 

@@ -13,6 +13,7 @@ interface EarthApi {
         @Query("lon") longitude : String,
         @Query("lat") latitude : String ,
         @Query("date") date : String,
+        @Query("dim") dim : String = "0.15",
         @Query("api_key") key : String = "DEMO_KEY"
     ) : Response<EarthResponseModel>
 }

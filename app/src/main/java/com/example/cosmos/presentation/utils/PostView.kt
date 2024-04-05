@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -79,12 +80,14 @@ fun PostView(
 
         Column(modifier = Modifier
             .fillMaxWidth(1f)
-            .clickable { onClickAction() }) {
+            .clickable { onClickAction() },
+            horizontalAlignment = Alignment.CenterHorizontally) {
             AsyncImage(
                 model = post.img, contentDescription = null, modifier = Modifier
-                    .fillMaxWidth(1f)
+                        .height(300.dp)
+                    .wrapContentWidth()
                     .clip(
-                        RoundedCornerShape(32.dp)
+                        RoundedCornerShape(8.dp)
                     )
             )
             Spacer(modifier = Modifier.size(8.dp))
@@ -105,7 +108,8 @@ fun PostView(
         Text(
             text = post.desp,
             fontSize = 14.sp,
-            style = TextStyle(lineHeight = 1.2.em)
+            style = TextStyle(lineHeight = 1.2.em),
+            modifier = Modifier.fillMaxWidth(1f)
         )
 
 

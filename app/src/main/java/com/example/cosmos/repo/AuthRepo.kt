@@ -15,20 +15,25 @@ class AuthRepo {
 
     suspend fun login(email: String, pass: String): String {
 
-        var response = "Error"
-        val func1 = CoroutineScope(Dispatchers.Main).launch {
-            val func2 = Firebase.auth.signInWithEmailAndPassword(email, pass).addOnSuccessListener {
-                response = "Success"
-            }.addOnFailureListener {
-                response = it.toString()
+        try {
+            var response = "Error"
+            val func1 = CoroutineScope(Dispatchers.IO).launch {
+                val func2 = Firebase.auth.signInWithEmailAndPassword(email, pass).addOnSuccessListener {
+                    response = "Success"
+                }.addOnFailureListener {
+                    response = it.toString()
+                }
+
+                func2.await()
+
+
             }
-
-            func2.await()
-
-
+            func1.join()
+            return response
         }
-        func1.join()
-        return response
+        catch (e:Exception){
+            return e.toString()
+        }
     }
 
     suspend fun signUp(email: String, pass: String, username: String, name: String): String {

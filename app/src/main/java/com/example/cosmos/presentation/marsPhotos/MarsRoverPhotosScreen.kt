@@ -1,25 +1,32 @@
 package com.example.cosmos.presentation.marsPhotos
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.cosmos.presentation.marsPhotos.compoents.MarsPop
 import com.example.cosmos.viewModel.MarsRoverViewModel
 import org.koin.androidx.compose.koinViewModel
+
 
 @Preview(showBackground = true)
 @Composable
@@ -31,6 +38,8 @@ fun MarsRoverPhotosScreen(
     val viewModel: MarsRoverViewModel = koinViewModel()
 
     val data by viewModel.data.observeAsState()
+
+
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getDate(date)
@@ -44,19 +53,53 @@ fun MarsRoverPhotosScreen(
     )
     //UI
     Column(
-        modifier = Modifier.fillMaxSize(1f)
+        modifier = Modifier
+            .fillMaxWidth(1f)
+            .fillMaxHeight(1f)
     ) {
 
-        data?.let {
+        data?.photos?.let {
+            LazyVerticalGrid(columns = GridCells.Fixed(3)) {
 
-            LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)){
-                items(it.photos) {
-                    AsyncImage(model = it.img_src, contentDescription = null)
-                    Log.d("MARS_ROVER_PHOTOS",it.img_src)
+                items(it) {photo->
+
+                    val showPopUp = remember {
+                        mutableStateOf(false)
+                    }
+                    AsyncImage(
+                        model = convertToHttps(photo.img_src),
+                        contentDescription = null,
+                        modifier = Modifier
+
+//                            .background(Color.Gray)
+                            .padding(1.dp)
+                            .clickable {
+                                showPopUp.value = true
+                            }
+                    )
+
+                    if(showPopUp.value){
+                        MarsPop(photo = photo, popUpVisibility = showPopUp)
+                    }
+
+                    Log.d("MARS_ROVER_PHOTOS_SCREEN", photo.img_src)
+
+                    Spacer(modifier = Modifier.size(16.dp))
                 }
             }
+
         }
+//        AsyncImage(model = "https://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/00530/opgs/edr/fcam/FRB_444538224EDR_F0260184FHAZ00323M_.JPG", contentDescription = null)
+    }
+}
 
-
+fun convertToHttps(url: String): String {
+    // Check if the URL starts with "http://"
+    return if (url.startsWith("http://")) {
+        // Replace "http://" with "https://"
+        "https://" + url.substring(7)
+    } else {
+        // If it doesn't start with "http://", prepend "https://" to the original URL
+        "https://$url"
     }
 }

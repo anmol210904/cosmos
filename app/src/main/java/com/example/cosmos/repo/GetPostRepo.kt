@@ -16,7 +16,7 @@ class GetPostRepo() {
     suspend fun getPosts(): ArrayList<GetPostModel> {
         val response = arrayListOf<GetPostModel>()
         val func = CoroutineScope(Dispatchers.IO).launch {
-            Firebase.firestore.collection("posts").limit(10).get().addOnSuccessListener {
+            Firebase.firestore.collection("posts").orderBy("date").limit(10).get().addOnSuccessListener {
                 for(i in it.documents){
                     val temp = i.toObject(GetPostModel ::class.java)
                     if (temp != null) {
