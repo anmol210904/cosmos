@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.cosmos.navigation.NavItem
 import com.example.cosmos.presentation.utils.PostView
 import com.example.cosmos.viewModel.ProfileViewModel
 import com.google.firebase.Firebase
@@ -62,7 +64,7 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
 //    }
 
 
-    val viewModel  = koinViewModel<ProfileViewModel>()
+    val viewModel = koinViewModel<ProfileViewModel>()
 
     LaunchedEffect(key1 = Unit) {
         Firebase.auth.uid?.let { viewModel.getProfile(it) }
@@ -72,12 +74,13 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
     val posts by viewModel.posts.observeAsState()
     val profile by viewModel.profile.observeAsState()
 
+    val postsScrollState = rememberLazyListState()
+
 
     //values
 
 
     //UI
-
 
 
     Column(
@@ -87,7 +90,7 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
 
         //Top bar
 
-        if (profile != null){
+        if (profile != null) {
             Row(
                 modifier = Modifier.height(64.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -183,26 +186,22 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
                 Text(text = "My Posts", fontSize = 18.sp)
             }
 
-            if(posts != null){
+            if (posts != null) {
 
 
-
-                LazyColumn {
-                    items(posts!!){
-                        PostView(it)
+                LazyColumn(state = postsScrollState) {
+                    items(posts!!) {
+                        PostView(it) {
+                            mainNavController.navigate(NavItem.Post.screen_route + "/${it.postId}")
+                        }
                     }
                 }
             }
 
-
-
-            //
-
-
         }
 
 
-        }
+    }
 
 }
 

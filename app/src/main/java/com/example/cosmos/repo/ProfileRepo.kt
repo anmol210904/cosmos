@@ -1,6 +1,7 @@
 package com.example.cosmos.repo
 
 import com.example.cosmos.models.auth.SignUpModel
+import com.example.cosmos.models.post.GetPostModel
 import com.example.cosmos.models.post.PostModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -26,14 +27,14 @@ class ProfileRepo {
 
     }
 
-    suspend fun getPosts(uid :String): ArrayList<PostModel>? {
+    suspend fun getPosts(uid :String): ArrayList<GetPostModel>? {
 
-        var response : ArrayList<PostModel> ? = null
+        var response : ArrayList<GetPostModel> ? = null
         val func1 = CoroutineScope(Dispatchers.Main).launch {
             Firebase.firestore.collection("posts").whereEqualTo("userUid",uid).get().addOnSuccessListener{
                 response = arrayListOf()
                 for (i in it.documents){
-                    val temp = i.toObject(PostModel ::class.java)
+                    val temp = i.toObject(GetPostModel ::class.java)
                     if (temp != null) {
                         response!!.add(temp)
                     };

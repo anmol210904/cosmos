@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
 import com.example.cosmos.navigation.NavItem
 import com.example.cosmos.presentation.utils.GlobalTextField

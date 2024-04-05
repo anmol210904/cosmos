@@ -5,13 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cosmos.models.auth.SignUpModel
+import com.example.cosmos.models.post.GetPostModel
 import com.example.cosmos.models.post.PostModel
 import com.example.cosmos.repo.ProfileRepo
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val repo: ProfileRepo): ViewModel() {
-    private val _posts = MutableLiveData<ArrayList<PostModel>?>()
-    val posts : LiveData<ArrayList<PostModel>?>
+    private val _posts = MutableLiveData<ArrayList<GetPostModel>?>()
+    val posts : LiveData<ArrayList<GetPostModel>?>
         get() = _posts
 
     private val _profile = MutableLiveData<SignUpModel?>()

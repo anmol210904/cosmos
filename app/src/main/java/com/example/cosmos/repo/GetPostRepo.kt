@@ -13,12 +13,15 @@ import kotlinx.coroutines.tasks.await
 
 class GetPostRepo() {
 
-    suspend fun getPosts(): ArrayList<PostModel> {
-        val response = arrayListOf<PostModel>()
+    suspend fun getPosts(): ArrayList<GetPostModel> {
+        val response = arrayListOf<GetPostModel>()
         val func = CoroutineScope(Dispatchers.IO).launch {
             Firebase.firestore.collection("posts").limit(10).get().addOnSuccessListener {
                 for(i in it.documents){
-                    val temp = i.toObject(PostModel ::class.java)
+                    val temp = i.toObject(GetPostModel ::class.java)
+                    if (temp != null) {
+                        temp.postId = i.id
+                    }
                     if (temp != null) {
                         response.add(temp)
                     }
@@ -31,4 +34,6 @@ class GetPostRepo() {
 
 
     }
+
+
 }

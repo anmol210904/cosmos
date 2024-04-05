@@ -23,6 +23,7 @@ fun BottomNavigation(navHostController: NavHostController) {
         NavItem.Home,
         NavItem.Apod,
         NavItem.Add_Post,
+        NavItem.MODULE,
         NavItem.Profile
 
     )

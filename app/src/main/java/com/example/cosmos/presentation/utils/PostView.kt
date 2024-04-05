@@ -1,8 +1,11 @@
 package com.example.cosmos.presentation.utils
 
 import android.os.Build
+import android.service.autofill.OnClickAction
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.CombinedClickableNode
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,16 +26,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.cosmos.R
 import com.example.cosmos.models.post.GetPostModel
 import com.example.cosmos.models.post.PostModel
+import com.example.cosmos.navigation.NavItem
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
-fun PostView(post: PostModel = PostModel()) {
+fun PostView(
+    post: GetPostModel = GetPostModel(),
+    navController: NavController = rememberNavController(),
+    onClickAction: () -> Unit = {}
+) {
 
     Column(
         modifier = Modifier
@@ -45,15 +55,19 @@ fun PostView(post: PostModel = PostModel()) {
     ) {
 
         //title
-        Row (modifier = Modifier
-            .fillMaxWidth(1f)){
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(1f)
+        ) {
 
 
-            AsyncImage(model = post.userImg, contentDescription = null, modifier = Modifier
-                .size(32.dp)
-                .clip(
-                    CircleShape
-                ))
+            AsyncImage(
+                model = post.userImg, contentDescription = null, modifier = Modifier
+                    .size(32.dp)
+                    .clip(
+                        CircleShape
+                    )
+            )
             Spacer(modifier = Modifier.size(8.dp))
             Text(text = post.username)
 
@@ -63,19 +77,27 @@ fun PostView(post: PostModel = PostModel()) {
         //media
 
 
-        AsyncImage(model = post.img, contentDescription = null, modifier = Modifier.fillMaxWidth(1f).clip(
-            RoundedCornerShape(32.dp)
-        ))
-        Spacer(modifier = Modifier.size(8.dp))
+        Column(modifier = Modifier
+            .fillMaxWidth(1f)
+            .clickable { onClickAction() }) {
+            AsyncImage(
+                model = post.img, contentDescription = null, modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .clip(
+                        RoundedCornerShape(32.dp)
+                    )
+            )
+            Spacer(modifier = Modifier.size(8.dp))
 
 
-        //date
-        Text(
-            text = "Date: ${post.date}",
-            modifier = Modifier.fillMaxWidth(1f),
-            fontSize = 12.sp,
-            // Adjust the line spacing value as needed
-        )
+            //date
+            Text(
+                text = "Date: ${post.date}",
+                modifier = Modifier.fillMaxWidth(1f),
+                fontSize = 12.sp,
+                // Adjust the line spacing value as needed
+            )
+        }
 
         Spacer(modifier = Modifier.size(8.dp))
 
@@ -87,11 +109,8 @@ fun PostView(post: PostModel = PostModel()) {
         )
 
 
-
-
-
-
-
     }
 
 }
+
+

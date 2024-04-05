@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cosmos.navigation.BottomNavGraph
 import com.example.cosmos.navigation.BottomNavigation
 import com.example.cosmos.navigation.NavGraph
+import com.example.cosmos.presentation.earth.EarthScreen
 import com.example.cosmos.ui.theme.CosmosTheme
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     val navHostController = rememberNavController()
 
                     NavGraph(navHostController = navHostController)
-                    
+//                    EarthScreen()
 
 
                 }

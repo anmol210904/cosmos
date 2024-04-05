@@ -2,7 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="Post1">
+      <entry key="EarthScreen">
+        <State />
+      </entry>
+      <entry key="MarsRoverPhotosScreen">
+        <State />
+      </entry>
+      <entry key="PostsScreen">
         <State />
       </entry>
       <entry key="app">

@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.cosmos.presentation.AppPostScreen.AddPostScreen
+import com.example.cosmos.presentation.Modules.ModulesScreen
 import com.example.cosmos.presentation.apod.ApodScreen
 import com.example.cosmos.presentation.home.HomeScreen
 import com.example.cosmos.presentation.profile.ProfileScreen
@@ -27,6 +28,9 @@ fun BottomNavGraph(navHostController: NavHostController, mainNavController: NavH
             ProfileScreen(mainNavController)
         }
 
+        composable(NavItem.MODULE.screen_route){
+            ModulesScreen(mainNavController)
+        }
 
         composable(NavItem.Add_Post.screen_route){
             AddPostScreen(mainNavController)

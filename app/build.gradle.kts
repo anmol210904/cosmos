@@ -75,7 +75,7 @@ dependencies {
     //nevigation
     val nav_version = "2.7.7"
 
-    implementation ("androidx.navigation:navigation-compose:$nav_version")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 
 
     // Viewmodel
@@ -98,8 +98,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
     //Retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // Koin
     val koinVersion = "3.5.3"
@@ -116,7 +116,15 @@ dependencies {
     //live data
     implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
     // Koin Test features
-    testImplementation("io.insert-koin:koin-test:$koinVersion")}
+    testImplementation("io.insert-koin:koin-test:$koinVersion")
+
+
+    //date picker
+    implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.3.0")
+    implementation("com.maxkeppeler.sheets-compose-dialogs:date-time:1.3.0")
+
+}
+
 
 
 
