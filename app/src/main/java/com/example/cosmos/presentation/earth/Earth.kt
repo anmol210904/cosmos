@@ -1,5 +1,7 @@
 package com.example.cosmos.presentation.earth
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +38,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.cosmos.R
+import com.example.cosmos.api.resource.Response
+import com.example.cosmos.models.earthModel.EarthResponseModel
 import com.example.cosmos.presentation.utils.GlobalTextField
 import com.example.cosmos.viewModel.EarthViewModel
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
@@ -66,6 +70,25 @@ fun EarthScreen(
     }
 
     val calendarState = rememberUseCaseState()
+
+    data?.let {
+        when(data){
+            is Response.Success ->{
+               Log.d("EARTH_SCREEN",it.data?.url.toString())
+                Log.d("EARTH_SCREEN","err")
+
+            }
+
+            is Response.Error -> {
+                Log.d("EARTH_SCREEN","error")
+            }
+            is Response.Loading -> {
+                Log.d("EARTH_SCREEN","loading")
+
+            }
+            null -> {}
+        }
+    }
 
 
 
@@ -114,7 +137,7 @@ fun EarthScreen(
 
         // date input
         GlobalTextField(
-            text = date, modifier = Modifier.width(180.dp), label = "Date of Birth",
+            text = date, modifier = Modifier.width(180.dp), label = "Date",
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
@@ -154,7 +177,7 @@ fun EarthScreen(
         // Image View
 
         AsyncImage(
-            model = data?.url ?: "", contentDescription = null,
+            model = data?.data?.url, contentDescription = null,
             modifier = if(false) Modifier
                 .fillMaxWidth(1f)
                 .wrapContentHeight() else Modifier

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,16 +20,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +56,10 @@ import com.example.cosmos.R
 import com.example.cosmos.models.post.CommentModel
 import com.example.cosmos.viewModel.PostViewModel
 import org.koin.androidx.compose.koinViewModel
+import java.time.Instant
+import java.util.Date
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
@@ -56,19 +68,30 @@ fun PostsScreen(
     navHostController: NavHostController = rememberNavController()
 ) {
 
-        val viewModel = koinViewModel<PostViewModel>()
+    val viewModel = koinViewModel<PostViewModel>()
 
-        val post by viewModel.post.observeAsState()
+    val post by viewModel.post.observeAsState()
+
+    val commentsList by viewModel.loadCommentResponse.observeAsState()
+
+
+
+    var commentText by remember {
+        mutableStateOf("")
+    }
 
     LaunchedEffect(key1 = Unit) {
         if (postId != null) {
             viewModel.getPost(postId)
-        };
+            viewModel.loadComments(postId)
+        }
+
+
     }
 
 
     //UI
-    if(post != null){
+    if (post != null) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(1f)
@@ -139,7 +162,7 @@ fun PostsScreen(
             AsyncImage(
                 model = post?.img, contentDescription = null,
                 modifier = Modifier
-                    .height(400.dp)
+                    .height(300.dp)
                     .wrapContentWidth()
                     .clip(RoundedCornerShape(8.dp))
             )
@@ -161,30 +184,89 @@ fun PostsScreen(
 
 
                 IconButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = painterResource(id = R.drawable.chat), contentDescription = null ,
-                        modifier = Modifier.size(22.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.chat), contentDescription = null,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
                 Text(text = formatNumber(post!!.comments))
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 IconButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = painterResource(id = R.drawable.retweet), contentDescription = null ,
-                        modifier = Modifier.size(22.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.retweet),
+                        contentDescription = null,
+                        modifier = Modifier.size(22.dp)
+                    )
                 }
                 Text(text = "32.3k")
 
 
             }
 
+
             val comments = arrayListOf<CommentModel>()
-            for (i in 1..10){
+            for (i in 1..10) {
                 comments.add(CommentModel())
             }
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(comments){
-                    Comment()
+
+
+                item {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        AsyncImage(
+                            model = post?.userImg, contentDescription = null,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(Color.Gray)
+                        )
+
+
+                        val outlinedTextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent,
+                            disabledBorderColor = Color.Transparent
+                        )
+
+
+                        OutlinedTextField(
+                            value = commentText,
+                            onValueChange = {
+                            commentText = it
+                            },
+                            colors = outlinedTextFieldColors,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(50.dp),
+                            textStyle = TextStyle(fontSize = 12.sp),
+                            placeholder = { Text(text = "Add a comment", fontSize = 12.sp)}
+                        )
+
+//                        Spacer(modifier = Modifier.weight(1f))
+
+                        IconButton(onClick = {
+                            val comment  = CommentModel(post!!.img, username = post!!.username, content = commentText, date = Date.from(
+                                Instant.now()).toString(),  )
+                            if (postId != null) {
+                                viewModel.addComment(postId, comment)
+                            }
+                        }) {
+                            Icon(painter = painterResource(id = R.drawable.post), contentDescription = null,
+                                modifier = Modifier.size(24.dp))
+                        }
+
+                    }
                     Divider(modifier = Modifier.fillMaxWidth(1f))
+                }
+
+                if(commentsList?.data != null){
+                    items(commentsList?.data!!){
+                        Comment(it)
+                    }
                 }
 
             }
@@ -198,10 +280,9 @@ fun PostsScreen(
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
-fun Comment(commentModel: CommentModel= CommentModel()){
+fun Comment(commentModel: CommentModel = CommentModel()) {
 
     Column(
         modifier = Modifier

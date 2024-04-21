@@ -15,5 +15,5 @@ interface EarthApi {
         @Query("date") date : String,
         @Query("dim") dim : String = "0.15",
         @Query("api_key") key : String = "DEMO_KEY"
-    ) : Response<EarthResponseModel>
+    ) :EarthResponseModel
 }
