@@ -3,6 +3,7 @@ package com.example.cosmos.presentation.posts
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,18 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +51,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.cosmos.R
 import com.example.cosmos.models.post.CommentModel
+import com.example.cosmos.navigation.NavItem
 import com.example.cosmos.viewModel.PostViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
@@ -75,7 +73,6 @@ fun PostsScreen(
     val commentsList by viewModel.loadCommentResponse.observeAsState()
 
 
-
     var commentText by remember {
         mutableStateOf("")
     }
@@ -95,7 +92,7 @@ fun PostsScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth(1f)
-                .wrapContentHeight()
+                .fillMaxHeight(1f)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -105,7 +102,8 @@ fun PostsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth(1f)
-                    .height(48.dp),
+                    .height(48.dp)
+                ,
                 verticalAlignment = Alignment.CenterVertically
 
             ) {
@@ -116,11 +114,14 @@ fun PostsScreen(
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray)
-                )
+                        .background(Color.Gray),
+
+                    )
                 Spacer(modifier = Modifier.size(24.dp))
                 Column(
-                    modifier = Modifier.fillMaxHeight(1f),
+                    modifier = Modifier.fillMaxHeight(1f).clickable {
+                        navHostController.navigate(NavItem.OtherProfile.screen_route + "/${post!!.userUid}")
+                    },
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
                     post?.let {
@@ -128,10 +129,10 @@ fun PostsScreen(
                             text = it.username,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            style = TextStyle(lineHeight = 1.2.em)
+                            style = TextStyle(lineHeight = 1.2.em),
+                            fontFamily = FontFamily.Serif
                         )
                     }
-
 
 
                     post?.let {
@@ -139,7 +140,9 @@ fun PostsScreen(
                             text = it.date,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Light,
-                            style = TextStyle(lineHeight = 1.2.em)
+                            style = TextStyle(lineHeight = 1.2.em),
+                            fontFamily = FontFamily.Serif
+
                         )
                     }
                 }
@@ -162,8 +165,7 @@ fun PostsScreen(
             AsyncImage(
                 model = post?.img, contentDescription = null,
                 modifier = Modifier
-                    .height(300.dp)
-                    .wrapContentWidth()
+                    .fillMaxWidth(1f)
                     .clip(RoundedCornerShape(8.dp))
             )
 
@@ -178,7 +180,9 @@ fun PostsScreen(
 
                     Icon(imageVector = Icons.Rounded.FavoriteBorder, contentDescription = null)
                 }
-                Text(text = formatNumber(post!!.likes))
+                Text(
+                    text = formatNumber(post!!.likes), fontFamily = FontFamily.Serif
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -189,18 +193,22 @@ fun PostsScreen(
                         modifier = Modifier.size(22.dp)
                     )
                 }
-                Text(text = formatNumber(post!!.comments))
+                Text(
+                    text = formatNumber(post!!.comments), fontFamily = FontFamily.Serif
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    viewModel.repost(post!!)
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.retweet),
                         contentDescription = null,
                         modifier = Modifier.size(22.dp)
                     )
                 }
-                Text(text = "32.3k")
+
 
 
             }
@@ -214,9 +222,9 @@ fun PostsScreen(
 
 
                 item {
-                    Row (
+                    Row(
                         verticalAlignment = Alignment.CenterVertically
-                    ){
+                    ) {
                         AsyncImage(
                             model = post?.userImg, contentDescription = null,
                             modifier = Modifier
@@ -236,35 +244,50 @@ fun PostsScreen(
                         OutlinedTextField(
                             value = commentText,
                             onValueChange = {
-                            commentText = it
+                                commentText = it
                             },
                             colors = outlinedTextFieldColors,
                             modifier = Modifier
                                 .weight(1f)
                                 .height(50.dp),
-                            textStyle = TextStyle(fontSize = 12.sp),
-                            placeholder = { Text(text = "Add a comment", fontSize = 12.sp)}
+                            textStyle = TextStyle(
+                                fontSize = 12.sp, fontFamily = FontFamily.Serif
+                            ),
+                            placeholder = {
+                                Text(
+                                    text = "Add a comment",
+                                    fontSize = 12.sp,
+                                    fontFamily = FontFamily.Serif
+                                )
+                            }
                         )
 
 //                        Spacer(modifier = Modifier.weight(1f))
 
                         IconButton(onClick = {
-                            val comment  = CommentModel(post!!.img, username = post!!.username, content = commentText, date = Date.from(
-                                Instant.now()).toString(),  )
+                            val comment = CommentModel(
+                                post!!.img, username = post!!.username, content = commentText,
+                                date = Date.from(
+                                    Instant.now()
+                                ).toString(),
+                            )
                             if (postId != null) {
                                 viewModel.addComment(postId, comment)
                             }
                         }) {
-                            Icon(painter = painterResource(id = R.drawable.post), contentDescription = null,
-                                modifier = Modifier.size(24.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.post),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
                         }
 
                     }
                     Divider(modifier = Modifier.fillMaxWidth(1f))
                 }
 
-                if(commentsList?.data != null){
-                    items(commentsList?.data!!){
+                if (commentsList?.data != null) {
+                    items(commentsList?.data!!) {
                         Comment(it)
                     }
                 }
@@ -323,9 +346,12 @@ fun Comment(commentModel: CommentModel = CommentModel()) {
 
                 Text(
                     text = commentModel.date,
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Light,
-                    style = TextStyle(lineHeight = 1.em)
+                    style = TextStyle(
+                        lineHeight = 1.em,
+                        fontFamily = FontFamily.Serif
+                    )
                 )
             }
 
@@ -340,7 +366,12 @@ fun Comment(commentModel: CommentModel = CommentModel()) {
 
 
 
-        Text(text = commentModel.content, style = TextStyle(lineHeight = 1.2.em), fontSize = 12.sp)
+        Text(
+            text = commentModel.content,
+            style = TextStyle(lineHeight = 1.2.em),
+            fontSize = 12.sp,
+            fontFamily = FontFamily.Serif
+        )
     }
 }
 

@@ -1,6 +1,7 @@
 package com.example.cosmos.presentation.AppPostScreen
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +51,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.cosmos.R
+import com.example.cosmos.api.resource.Response
+import com.example.cosmos.navigation.NavItem
 import com.example.cosmos.viewModel.AddPostViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -54,10 +60,14 @@ import org.koin.androidx.compose.koinViewModel
 @Preview(showBackground = true)
 @Composable
 fun AddPostScreen(
-    navHostController: NavHostController = rememberNavController()
+    mainNavHostController: NavHostController = rememberNavController()
 ) {
 
     val viewModel = koinViewModel<AddPostViewModel>()
+
+    val addPostResult by viewModel.addPostResult.observeAsState()
+
+    var isLoading by remember{ mutableStateOf(false) }
 
 
     var desp by remember {
@@ -66,6 +76,33 @@ fun AddPostScreen(
     var selectedImage by remember {
         mutableStateOf<Uri?>(null)
     }
+
+
+    addPostResult?.let {
+        when(it){
+            is Response.Error -> {
+                isLoading= false
+                Toast.makeText(LocalContext.current, it.errorMessage.toString(),Toast.LENGTH_LONG).show()
+
+            }
+            is Response.Loading -> {
+                isLoading = true
+            }
+            is Response.Success -> {
+                isLoading = false
+                selectedImage = null
+                desp = ""
+                Toast.makeText(LocalContext.current, "Uploaded Successfully",Toast.LENGTH_LONG).show()
+                mainNavHostController.navigate(NavItem.Main.screen_route){
+                    popUpTo(0)
+                }
+
+            }
+        }
+    }
+
+
+
 
 
     val singlePhotoPickerLauncher =
@@ -106,7 +143,12 @@ fun AddPostScreen(
                     selectedImage?.let { viewModel.addImage(it, desp = desp) }
                 }, modifier = Modifier.height(36.dp), enabled = selectedImage != null
             ) {
-                Text(text = "Post")
+                if(!isLoading){
+                    Text(text = "Post")
+                }else{
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp))
+
+                }
             }
         }
 

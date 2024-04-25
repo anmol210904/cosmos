@@ -18,12 +18,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.cosmos.models.apod.ApodResponseClass
 import com.example.cosmos.presentation.utils.GlobalTextField
 import com.example.cosmos.presentation.utils.Post1
 import com.example.cosmos.viewModel.ApodViewModel
@@ -42,6 +44,11 @@ fun ApodScreen(navHostController: NavHostController = rememberNavController()) {
         viewModel.getData()
     }
 
+    var filteredData by remember {
+        mutableStateOf(arrayListOf<ApodResponseClass>())
+    }
+
+
 
     if(data != null){
         Log.d("TAG123", data!![0].explanation)
@@ -50,6 +57,7 @@ fun ApodScreen(navHostController: NavHostController = rememberNavController()) {
     //values
 
     val seachText = remember { mutableStateOf("") }
+
 
 
     //UI stats here
@@ -67,9 +75,12 @@ fun ApodScreen(navHostController: NavHostController = rememberNavController()) {
         if(data != null){
             LazyColumn {
                 items(data!!){
-                    Post1(it)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Divider()
+                    if(it.title.contains(seachText.value)){
+                        Post1(it)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Divider()
+                    }
+
 
                 }
             }

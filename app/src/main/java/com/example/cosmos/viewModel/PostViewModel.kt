@@ -16,6 +16,9 @@ class PostViewModel(private val repo: PostRepo) : ViewModel() {
     val post: MutableLiveData<GetPostModel?>
         get() = _post
 
+    private val _repostResult = MutableLiveData<Response<String>>()
+    val repostResult : LiveData<Response<String>>
+        get() = _repostResult
 
     private val _commentResponse = MutableLiveData<Response<Unit>>()
     val commentResponse : LiveData<Response<Unit>>
@@ -66,6 +69,14 @@ class PostViewModel(private val repo: PostRepo) : ViewModel() {
 
         viewModelScope.launch {
             _loadCommentsResponse.postValue(repo.loadComments(postId))
+        }
+    }
+
+
+    fun repost(tweet : GetPostModel){
+        _repostResult.postValue(Response.Loading())
+        viewModelScope.launch {
+            _repostResult.postValue(repo.retweet(tweet))
         }
     }
 

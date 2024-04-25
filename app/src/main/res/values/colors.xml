@@ -9,6 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="postColor">#E6F6D7</color>
     <color name="background">#C9EBA6</color>
+    <color name="button_gray">#F5f5f5</color>
+
 
 
 </resources>

@@ -21,8 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -70,7 +72,7 @@ fun PostView(
                     )
             )
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = post.username)
+            Text(text = post.username, fontFamily =  FontFamily.Serif)
 
         }
         Spacer(modifier = Modifier.size(8.dp))
@@ -84,11 +86,12 @@ fun PostView(
             horizontalAlignment = Alignment.CenterHorizontally) {
             AsyncImage(
                 model = post.img, contentDescription = null, modifier = Modifier
-                        .height(300.dp)
-                    .wrapContentWidth()
+                        .fillMaxWidth()
                     .clip(
                         RoundedCornerShape(8.dp)
-                    )
+                    ),
+                contentScale = ContentScale.FillWidth
+
             )
             Spacer(modifier = Modifier.size(8.dp))
 
@@ -98,18 +101,20 @@ fun PostView(
                 text = "Date: ${post.date}",
                 modifier = Modifier.fillMaxWidth(1f),
                 fontSize = 12.sp,
+                fontFamily = FontFamily.Serif
                 // Adjust the line spacing value as needed
             )
         }
 
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(4.dp))
 
         //desp
         Text(
             text = post.desp,
             fontSize = 14.sp,
             style = TextStyle(lineHeight = 1.2.em),
-            modifier = Modifier.fillMaxWidth(1f)
+            modifier = Modifier.fillMaxWidth(1f),
+            fontFamily = FontFamily.Serif
         )
 
 

@@ -53,15 +53,17 @@ import org.koin.androidx.compose.koinViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
-fun ProfileScreen(mainNavController: NavHostController = rememberNavController()) {
-
+fun OtherProfileScreen(
+    mainNavController: NavHostController = rememberNavController(),
+    userId: String = ""
+) {
 
 
     val viewModel = koinViewModel<ProfileViewModel>()
 
     LaunchedEffect(key1 = Unit) {
-        Firebase.auth.uid?.let { viewModel.getProfile(it) }
-        Firebase.auth.uid?.let { viewModel.getPosts(it) }
+        viewModel.getProfile(userId)
+        viewModel.getPosts(userId)
     }
 
     val posts by viewModel.posts.observeAsState()
@@ -88,7 +90,9 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
                 modifier = Modifier.height(64.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    mainNavController.popBackStack()
+                }) {
 
                     Icon(
                         imageVector = Icons.Rounded.KeyboardArrowLeft,
@@ -135,17 +139,6 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
                             .background(color = Color.Blue)
                     )
 
-                    IconButton(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier
-                            .size(40.dp) // Set size of the IconButton
-                            .shadow(8.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(color = Color.White)
-
-                    ) {
-                        Icon(imageVector = Icons.Rounded.Edit, contentDescription = null)
-                    }
                 }
 
                 Spacer(modifier = Modifier.size(32.dp))
@@ -197,4 +190,3 @@ fun ProfileScreen(mainNavController: NavHostController = rememberNavController()
     }
 
 }
-

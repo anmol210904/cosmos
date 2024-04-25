@@ -1,6 +1,7 @@
 package com.example.cosmos.repo
 
 
+import com.example.cosmos.api.resource.Response
 import com.example.cosmos.models.auth.SignUpModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -13,48 +14,39 @@ import kotlinx.coroutines.tasks.await
 class AuthRepo {
 
 
-    suspend fun login(email: String, pass: String): String {
+    suspend fun login(email: String, pass: String): Response<String> {
 
-        try {
-            var response = "Error"
-            val func1 = CoroutineScope(Dispatchers.IO).launch {
-                val func2 = Firebase.auth.signInWithEmailAndPassword(email, pass).addOnSuccessListener {
-                    response = "Success"
-                }.addOnFailureListener {
-                    response = it.toString()
-                }
+        return try {
+            Firebase.auth.signInWithEmailAndPassword(email, pass).await()
 
-                func2.await()
-
-
-            }
-            func1.join()
-            return response
-        }
-        catch (e:Exception){
-            return e.toString()
+            Response.Success("Success")
+        } catch (e: Exception) {
+            Response.Error(e.toString())
         }
     }
 
-    suspend fun signUp(email: String, pass: String, username: String, name: String): String {
-        var resposne = "Error";
-        val func1 = CoroutineScope(Dispatchers.Main).launch {
-            val func2 =
-                Firebase.auth.createUserWithEmailAndPassword(email, pass).addOnSuccessListener {
-                    Firebase.firestore.collection("users")
-                        .document(Firebase.auth.currentUser?.uid.toString()).set(
-                            SignUpModel(name , username,Firebase.auth.currentUser?.uid.toString())
-                        )
+    suspend fun signUp(
+        email: String,
+        pass: String,
+        username: String,
+        name: String
+    ): Response<String> {
 
-                    resposne = "Success"
-                }.addOnFailureListener{
-                    resposne = it.toString()
-                }
-            func2.await()
+        return try {
 
+            Firebase.auth.createUserWithEmailAndPassword(email, pass).await()
+            if(Firebase.auth.currentUser != null){
+                Firebase.firestore.collection("users")
+                    .document(Firebase.auth.currentUser?.uid.toString()).set(
+                        SignUpModel(name, username, Firebase.auth.currentUser?.uid.toString())
+                    ).await()
+            }
+
+            Response.Success("Success")
+        } catch (e: Exception) {
+            Response.Error(e.toString())
         }
-        func1.join()
 
-        return resposne
+
     }
 }

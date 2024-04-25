@@ -57,7 +57,6 @@ fun MarsRoverDateScreen(
     )
 
 
-
     //UI
     Column(
         modifier = Modifier.fillMaxSize(1f),
@@ -90,11 +89,13 @@ fun MarsRoverDateScreen(
         }
 
         // button
-        Button(onClick = {
-            navHostController.navigate(NavItem.MarsRoverPhotos.screen_route + "/${date.value}")
-        },
+        Button(
+            onClick = {
+                navHostController.navigate(NavItem.MarsRoverPhotos.screen_route + "/${date.value}")
+            },
             modifier = Modifier.padding(32.dp),
-            enabled = date.value != null) {
+            enabled = date.value != null
+        ) {
             Text(text = "Fetch", modifier = Modifier.padding(horizontal = 32.dp))
         }
 

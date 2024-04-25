@@ -2,8 +2,10 @@ package com.example.cosmos.repo
 
 import androidx.compose.runtime.DisposableEffect
 import com.example.cosmos.api.resource.Response
+import com.example.cosmos.models.auth.SignUpModel
 import com.example.cosmos.models.post.CommentModel
 import com.example.cosmos.models.post.GetPostModel
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -90,6 +92,23 @@ class PostRepo() {
 
             Response.Success(comments)
         } catch (e: Exception) {
+            Response.Error(e.message.toString())
+        }
+    }
+
+    suspend fun retweet(postModel: GetPostModel) : Response<String>{
+        postModel.userUid = Firebase.auth.uid!!
+        return try{
+            var user : SignUpModel = SignUpModel()
+            Firebase.firestore.collection("users").document(Firebase.auth.uid!!).get().addOnSuccessListener {
+                user = it.toObject(SignUpModel :: class.java)!!
+            }.await()
+            postModel.username = user.username
+//            postModel.date =
+            Firebase.firestore.collection("posts").document(UUID.randomUUID().toString()).set(postModel).await()
+            Response.Success("Success")
+
+        }catch (e :Exception){
             Response.Error(e.message.toString())
         }
     }

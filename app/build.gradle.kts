@@ -123,6 +123,15 @@ dependencies {
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.3.0")
     implementation("com.maxkeppeler.sheets-compose-dialogs:date-time:1.3.0")
 
+
+    //extra icons
+    implementation("androidx.compose.material:material-icons-extended:1.6.3")
+    
+
+
+
+
+
 }
 
 

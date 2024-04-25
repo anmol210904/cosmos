@@ -9,6 +9,11 @@ sealed  class NavItem(var title:String, var icon:Int?, var screen_route:String) 
 
     object MODULE : NavItem("Other",R.drawable.other_img,"Other")
     object Profile : NavItem("Profile", R.drawable.profile,"profile")
+
+    object OtherProfile : NavItem("OtherProfile", null, "otherProfile")
+
+
+    object Onboarding : NavItem("Onboard",null, "onboard")
     object Auth_Login : NavItem("Login", null, "login" )
     object Auth_SignUp : NavItem("SignUp", null , "sign_up")
     object Add_Post : NavItem("AddPost", R.drawable.add_post, "add_post")

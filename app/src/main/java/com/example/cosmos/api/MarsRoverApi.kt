@@ -12,5 +12,5 @@ interface MarsRoverApi {
     suspend fun getMarsPhotos(
         @Query("earth_date")date : String ,
         @Query("api_key") apiKey : String= Urls.API_KEY
-    ) : Response<MarsRoverResponseModel>
+    ) : MarsRoverResponseModel
 }
