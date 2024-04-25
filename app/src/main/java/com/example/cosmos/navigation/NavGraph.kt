@@ -18,6 +18,7 @@ import com.example.cosmos.presentation.earth.EarthScreen
 import com.example.cosmos.presentation.home.HomeScreen
 import com.example.cosmos.presentation.marsPhotos.MarsRoverDateScreen
 import com.example.cosmos.presentation.marsPhotos.MarsRoverPhotosScreen
+import com.example.cosmos.presentation.posts.EditScreen
 import com.example.cosmos.presentation.posts.PostsScreen
 import com.example.cosmos.presentation.profile.MyProfileScreen
 import com.example.cosmos.presentation.profile.OtherProfileScreen
@@ -95,6 +96,10 @@ fun NavGraph(navHostController: NavHostController) {
                     )
                 }
             }
+        }
+
+        composable(route = NavItem.Edit.screen_route){
+            EditScreen(navHostController)
         }
     }
 }

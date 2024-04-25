@@ -1,5 +1,7 @@
 package com.example.cosmos.repo
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.DisposableEffect
 import com.example.cosmos.api.resource.Response
 import com.example.cosmos.models.auth.SignUpModel
@@ -7,52 +9,44 @@ import com.example.cosmos.models.post.CommentModel
 import com.example.cosmos.models.post.GetPostModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
-class PostRepo() {
+class PostRepo {
 
-    suspend fun getPost(postId: String): GetPostModel {
-        var temp = GetPostModel();
-        CoroutineScope(Dispatchers.IO).launch {
-            Firebase.firestore.collection("posts").document(postId).get().addOnCompleteListener {
-                if (it.isSuccessful) {
+    suspend fun getPost(postId: String): Response<GetPostModel> {
 
-                    temp = it.result.toObject(GetPostModel::class.java)!!
-
-                }
-            }.await()
-        }.join()
-        return temp;
+        return try {
+            var snapshot = Firebase.firestore.collection("posts").document(postId).get().await()
+            var temp = snapshot.toObject(GetPostModel::class.java)
+            if (temp != null) {
+                Response.Success(temp)
+            } else {
+                Response.Error("No data available")
+            }
+        } catch (e: Exception) {
+            Response.Error(e.message.toString())
+        }
 
     }
+
 
     suspend fun addLike(postId: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            Firebase.firestore.collection("posts").document(postId).get().addOnSuccessListener {
-                var likes: Long = it.get("likes").toString().toLong()
-                likes++;
-                Firebase.firestore.collection("posts").document(postId).update("likes", likes);
+        try {
+            var snapshot = Firebase.firestore.collection("posts").document(postId).get().await()
+            var temp = snapshot.toObject(GetPostModel::class.java)
+            temp?.likes = temp?.likes!! + 1
+            Firebase.firestore.collection("posts").document(postId).set(temp).await()
+        } catch (_: Exception) {
 
-            }
         }
     }
-
-    suspend fun removeLike(postId: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            Firebase.firestore.collection("posts").document(postId).get().addOnSuccessListener {
-                var likes: Long = it.get("likes").toString().toLong()
-                likes--;
-                Firebase.firestore.collection("posts").document(postId).update("likes", likes);
-
-            }
-        }
-    }
-
 
     suspend fun addComment(
         postId: String,
@@ -83,7 +77,7 @@ class PostRepo() {
             val comments = arrayListOf<CommentModel>()
 
             val func = CoroutineScope(Dispatchers.IO).launch {
-                Firebase.firestore.collection("posts").document(postId).collection("comments").orderBy("").get()
+                Firebase.firestore.collection("posts").document(postId).collection("comments").get()
                     .addOnSuccessListener {
                         for (i in it.documents) {
                             i.toObject(CommentModel::class.java)?.let { it1 -> comments.add(it1) }
@@ -117,6 +111,8 @@ class PostRepo() {
             Response.Error(e.message.toString())
         }
     }
+
+
 
 
 }

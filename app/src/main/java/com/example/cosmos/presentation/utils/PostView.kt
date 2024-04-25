@@ -69,7 +69,9 @@ fun PostView(
                     .size(32.dp)
                     .clip(
                         CircleShape
-                    )
+                    ),
+                contentScale = ContentScale.Crop
+
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(text = post.username, fontFamily = FontFamily.Serif)

@@ -111,22 +111,6 @@ fun MarsPop(
                 Divider()
                 Text(text = photo.earth_date, fontSize = 12.sp)
 
-                Spacer(modifier = Modifier.size(12.dp))
-
-                Row {
-                    Button(onClick = { /*TODO*/ },
-                        modifier = Modifier.weight(1f)) {
-                        Text(text = "Rover", fontSize = 12.sp)
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Button(onClick = { /*TODO*/ },
-                        modifier = Modifier.weight(1f)) {
-                        Text(text = "Rover", fontSize = 12.sp)
-                    }
-
-
-
-                }
 
 
             }

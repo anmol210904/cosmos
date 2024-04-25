@@ -1,9 +1,11 @@
 package com.example.cosmos.viewModel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cosmos.api.resource.Response
 import com.example.cosmos.models.auth.SignUpModel
 import com.example.cosmos.models.post.GetPostModel
 import com.example.cosmos.models.post.PostModel
@@ -19,6 +21,10 @@ class ProfileViewModel(private val repo: ProfileRepo): ViewModel() {
     val profile : LiveData<SignUpModel?>
         get() = _profile
 
+    private val _editUserResponse = MutableLiveData<Response<Unit>>()
+    val editUserResponse : LiveData<Response<Unit>>
+        get() = _editUserResponse
+
 
     fun getProfile(uid : String){
         _profile.postValue(null)
@@ -32,6 +38,19 @@ class ProfileViewModel(private val repo: ProfileRepo): ViewModel() {
         viewModelScope.launch {
             _posts.postValue(repo.getPosts(uid))
         }
+    }
+
+
+
+    fun editProfile(
+        username : String , fullName : String , image : Uri?
+    ){
+        _editUserResponse.postValue(Response.Loading())
+        viewModelScope.launch {
+            _editUserResponse.postValue(repo.editUser(username, fullName, image))
+        }
+
+
     }
 
 

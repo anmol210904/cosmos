@@ -1,6 +1,7 @@
 package com.example.cosmos.presentation.posts
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -42,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -76,6 +78,7 @@ fun PostsScreen(
 
     val post by viewModel.post.observeAsState()
 
+
     val commentsList by viewModel.loadCommentResponse.observeAsState()
 
 
@@ -85,15 +88,26 @@ fun PostsScreen(
 
     LaunchedEffect(key1 = Unit) {
         if (postId != null) {
+            Log.d("Post_detail",postId)
+        }
+        if (postId != null) {
             viewModel.getPost(postId)
             viewModel.loadComments(postId)
-            viewModel.addLike(postId)
+//            viewModel.addLike(postId)
         }
 
 
     }
 
     var commentLoading by remember {
+        mutableStateOf(false)
+    }
+
+    var isLoading by remember {
+        mutableStateOf(true)
+    }
+
+    val popUp = remember {
         mutableStateOf(false)
     }
 
@@ -118,9 +132,26 @@ fun PostsScreen(
         }
     }
 
+    post?.let {
+        when(it){
+            is Response.Error -> {
+
+                navHostController.popBackStack()
+            }
+            is Response.Loading -> {
+                isLoading = true
+            }
+            is Response.Success -> {
+                Log.d("Detail_Screen",it.data?.likes.toString()  )
+                isLoading = false
+            }
+        }
+    }
+
+
 
     //UI
-    if (post != null) {
+    if (isLoading == false) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(1f)
@@ -142,11 +173,12 @@ fun PostsScreen(
 
 
                 AsyncImage(
-                    model = post?.userImg, contentDescription = null,
+                    model = post!!.data!!.userImg, contentDescription = null,
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
                         .background(Color.Gray),
+                    contentScale = ContentScale.Crop
 
                     )
                 Spacer(modifier = Modifier.size(24.dp))
@@ -154,13 +186,13 @@ fun PostsScreen(
                     modifier = Modifier
                         .fillMaxHeight(1f)
                         .clickable {
-                            navHostController.navigate(NavItem.OtherProfile.screen_route + "/${post!!.userUid}")
+                            navHostController.navigate(NavItem.OtherProfile.screen_route + "/${post!!.data!!.userUid}")
                         },
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
                     post?.let {
                         Text(
-                            text = it.username,
+                            text = it.data!!.username,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             style = TextStyle(lineHeight = 1.2.em),
@@ -171,7 +203,7 @@ fun PostsScreen(
 
                     post?.let {
                         Text(
-                            text = it.date,
+                            text = it.data!!.date,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Light,
                             style = TextStyle(lineHeight = 1.2.em),
@@ -183,13 +215,23 @@ fun PostsScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                IconButton(onClick = { /*TODO*/ }) {
+
+                IconButton(
+                    modifier = Modifier.size(32.dp),
+                    onClick = {
+                        popUp.value = true
+                    }) {
                     Icon(
-                        imageVector = Icons.Rounded.MoreVert, contentDescription = null,
+                        imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = null,
+                        tint = Color.Unspecified
                     )
                 }
 
             }
+            ReportPopUp(onclick = { popUp.value = false
+                                  navHostController.popBackStack()}, open = popUp)
+
 
             Spacer(modifier = Modifier.size(16.dp))
 
@@ -197,7 +239,7 @@ fun PostsScreen(
 
 
             AsyncImage(
-                model = post?.img, contentDescription = null,
+                model = post?.data?.img, contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .clip(RoundedCornerShape(8.dp))
@@ -215,9 +257,13 @@ fun PostsScreen(
                     Icon(painter = painterResource(id = R.drawable.viewa), contentDescription = null,
                         modifier = Modifier.size(22.dp))
                 }
-                Text(
-                    text = formatNumber(post!!.likes), fontFamily = FontFamily.Serif
-                )
+
+                post?.data?.let{
+                    Text(
+                        text =   formatNumber(it.likes) , fontFamily = FontFamily.Serif
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -229,13 +275,13 @@ fun PostsScreen(
                     )
                 }
                 Text(
-                    text = formatNumber(post!!.comments), fontFamily = FontFamily.Serif
+                    text = formatNumber(post!!.data!!.comments), fontFamily = FontFamily.Serif
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 IconButton(onClick = {
-                    viewModel.repost(post!!)
+                    viewModel.repost(post!!.data!!)
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.retweet),
@@ -249,10 +295,7 @@ fun PostsScreen(
             }
 
 
-            val comments = arrayListOf<CommentModel>()
-            for (i in 1..10) {
-                comments.add(CommentModel())
-            }
+
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
 
 
@@ -261,7 +304,7 @@ fun PostsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         AsyncImage(
-                            model = post?.userImg, contentDescription = null,
+                            model = post?.data!!.userImg, contentDescription = null,
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(CircleShape)
@@ -301,7 +344,7 @@ fun PostsScreen(
 
                         IconButton(onClick = {
                             val comment = CommentModel(
-                                post!!.img, username = post!!.username, content = commentText,
+                                post!!.data!!.userImg, username = post!!.data!!.username, content = commentText,
                                 date = Date.from(
                                     Instant.now()
                                 ).toString(),

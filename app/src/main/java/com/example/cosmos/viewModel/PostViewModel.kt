@@ -1,5 +1,6 @@
 package com.example.cosmos.viewModel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,8 +13,8 @@ import kotlinx.coroutines.launch
 
 class PostViewModel(private val repo: PostRepo) : ViewModel() {
 
-    private val _post = MutableLiveData<GetPostModel?>()
-    val post: MutableLiveData<GetPostModel?>
+    private val _post = MutableLiveData<Response<GetPostModel>>()
+    val post: MutableLiveData<Response<GetPostModel>>
         get() = _post
 
     private val _repostResult = MutableLiveData<Response<String>>()
@@ -30,9 +31,10 @@ class PostViewModel(private val repo: PostRepo) : ViewModel() {
         get() = _loadCommentsResponse
 
 
+
     fun getPost(postId: String) {
 
-        _post.postValue(null)
+        _post.postValue(Response.Loading())
         viewModelScope.launch {
             post.postValue(repo.getPost(postId))
         }
@@ -45,11 +47,7 @@ class PostViewModel(private val repo: PostRepo) : ViewModel() {
         }
     }
 
-    fun removeLike(postId: String){
-        viewModelScope.launch {
-            repo.removeLike(postId)
-        }
-    }
+
 
 //    fun addComment()
 
@@ -79,6 +77,8 @@ class PostViewModel(private val repo: PostRepo) : ViewModel() {
             _repostResult.postValue(repo.retweet(tweet))
         }
     }
+
+
 
 
 

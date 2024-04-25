@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -152,7 +153,8 @@ fun MyProfileScreen(mainNavController: NavHostController = rememberNavController
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(150.dp)
-                            .background(color = Color.Blue)
+                            .background(color = Color.Blue),
+                        contentScale = ContentScale.Crop
                     )
 
 
@@ -160,9 +162,7 @@ fun MyProfileScreen(mainNavController: NavHostController = rememberNavController
 
                     IconButton(
                         onClick = {
-                            singlePhotoPickerLauncher.launch(
-                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                            )
+                            mainNavController.navigate(NavItem.Edit.screen_route)
                         },
                         modifier = Modifier
                             .size(40.dp) // Set size of the IconButton

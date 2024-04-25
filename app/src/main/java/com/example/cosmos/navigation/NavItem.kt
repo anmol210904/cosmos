@@ -5,6 +5,8 @@ import com.example.cosmos.R
 sealed  class NavItem(var title:String, var icon:Int?, var screen_route:String) {
     object Main : NavItem("Main", null, "main")
     object Home : NavItem("Home", R.drawable.home, "home")
+
+    object Edit: NavItem("Edit",null,"edit")
     object Apod : NavItem("Apod",R.drawable.apod,"apod")
 
     object MODULE : NavItem("Other",R.drawable.other_img,"Other")
