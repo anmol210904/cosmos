@@ -1,6 +1,7 @@
 package com.example.cosmos.presentation.posts
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,12 +19,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -38,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -50,6 +55,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.cosmos.R
+import com.example.cosmos.api.resource.Response
 import com.example.cosmos.models.post.CommentModel
 import com.example.cosmos.navigation.NavItem
 import com.example.cosmos.viewModel.PostViewModel
@@ -81,9 +87,35 @@ fun PostsScreen(
         if (postId != null) {
             viewModel.getPost(postId)
             viewModel.loadComments(postId)
+            viewModel.addLike(postId)
         }
 
 
+    }
+
+    var commentLoading by remember {
+        mutableStateOf(false)
+    }
+
+    val commentResponse by viewModel.commentResponse.observeAsState()
+    commentResponse?.let {
+        when(it){
+            is Response.Error -> {
+                Toast.makeText(LocalContext.current, it.errorMessage, Toast.LENGTH_SHORT).show()
+                commentLoading = false
+            }
+            is Response.Loading -> {
+                commentLoading = true
+            }
+            is Response.Success -> {
+                commentLoading = false
+                commentText = ""
+
+            }
+            else -> {
+
+            }
+        }
     }
 
 
@@ -119,9 +151,11 @@ fun PostsScreen(
                     )
                 Spacer(modifier = Modifier.size(24.dp))
                 Column(
-                    modifier = Modifier.fillMaxHeight(1f).clickable {
-                        navHostController.navigate(NavItem.OtherProfile.screen_route + "/${post!!.userUid}")
-                    },
+                    modifier = Modifier
+                        .fillMaxHeight(1f)
+                        .clickable {
+                            navHostController.navigate(NavItem.OtherProfile.screen_route + "/${post!!.userUid}")
+                        },
                     verticalArrangement = Arrangement.SpaceAround
                 ) {
                     post?.let {
@@ -178,7 +212,8 @@ fun PostsScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { /*TODO*/ }) {
 
-                    Icon(imageVector = Icons.Rounded.FavoriteBorder, contentDescription = null)
+                    Icon(painter = painterResource(id = R.drawable.viewa), contentDescription = null,
+                        modifier = Modifier.size(22.dp))
                 }
                 Text(
                     text = formatNumber(post!!.likes), fontFamily = FontFamily.Serif
@@ -275,11 +310,15 @@ fun PostsScreen(
                                 viewModel.addComment(postId, comment)
                             }
                         }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.post),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
+                            if(!commentLoading){
+                                Icon(
+                                    painter = painterResource(id = R.drawable.post),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }else{
+                                CircularProgressIndicator(modifier = Modifier.size(32.dp), color = MaterialTheme.colorScheme.primary)
+                            }
                         }
 
                     }

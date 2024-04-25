@@ -4,6 +4,7 @@ import com.example.cosmos.models.auth.SignUpModel
 import com.example.cosmos.models.post.GetPostModel
 import com.example.cosmos.models.post.PostModel
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
@@ -34,9 +35,12 @@ class ProfileRepo {
             Firebase.firestore.collection("posts").whereEqualTo("userUid",uid).get().addOnSuccessListener{
                 response = arrayListOf()
                 for (i in it.documents){
-                    val temp = i.toObject(GetPostModel ::class.java)
+                    var temp = i.toObject(GetPostModel ::class.java)
+
                     if (temp != null) {
+                        temp.postId = i.id
                         response!!.add(temp)
+
                     };
                 }
 

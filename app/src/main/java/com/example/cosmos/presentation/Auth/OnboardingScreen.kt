@@ -1,5 +1,6 @@
 package com.example.cosmos.presentation.Auth
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -31,6 +33,9 @@ import androidx.navigation.NavInflater
 import androidx.navigation.compose.rememberNavController
 import com.example.cosmos.R
 import com.example.cosmos.navigation.NavItem
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.stevdzasan.onetap.OneTapSignInWithGoogle
+import com.stevdzasan.onetap.rememberOneTapSignInState
 
 
 @Preview(showBackground = true)
@@ -38,6 +43,7 @@ import com.example.cosmos.navigation.NavItem
 fun OnboardingScreen(
     navHostController: NavHostController = rememberNavController()
 ) {
+
 
 
     Column(
@@ -87,7 +93,9 @@ fun OnboardingScreen(
 
         Button(onClick = {
                          navHostController.navigate(NavItem.Auth_Login.screen_route)
+//                         state.open()
         },
+
             modifier = Modifier
                 .fillMaxWidth(1f)
                 .height(52.dp),

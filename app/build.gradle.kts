@@ -126,7 +126,9 @@ dependencies {
 
     //extra icons
     implementation("androidx.compose.material:material-icons-extended:1.6.3")
-    
+
+    //one tap compose
+    implementation("com.github.stevdza-san:OneTapCompose:1.0.12")
 
 
 

@@ -60,10 +60,13 @@ class PostRepo() {
     ): Response<Unit> {
 
         return try {
-            CoroutineScope(Dispatchers.IO).launch {
-                Firebase.firestore.collection("posts").document(postId).collection("comments")
-                    .document(UUID.randomUUID().toString()).set(commentModel)
-            }
+            Firebase.firestore.collection("posts").document(postId).collection("comments")
+                .document(UUID.randomUUID().toString()).set(commentModel).await()
+            var documentSnapshot =
+                Firebase.firestore.collection("posts").document(postId).get().await()
+            var temp = documentSnapshot.toObject(GetPostModel::class.java)
+            temp?.comments = temp?.comments!! + 1
+            Firebase.firestore.collection("posts").document(postId).set(temp).await()
             Response.Success()
         } catch (e: Exception) {
             Response.Error(e.message.toString())
@@ -80,7 +83,7 @@ class PostRepo() {
             val comments = arrayListOf<CommentModel>()
 
             val func = CoroutineScope(Dispatchers.IO).launch {
-                Firebase.firestore.collection("posts").document(postId).collection("comments").get()
+                Firebase.firestore.collection("posts").document(postId).collection("comments").orderBy("").get()
                     .addOnSuccessListener {
                         for (i in it.documents) {
                             i.toObject(CommentModel::class.java)?.let { it1 -> comments.add(it1) }
@@ -96,19 +99,21 @@ class PostRepo() {
         }
     }
 
-    suspend fun retweet(postModel: GetPostModel) : Response<String>{
+    suspend fun retweet(postModel: GetPostModel): Response<String> {
         postModel.userUid = Firebase.auth.uid!!
-        return try{
-            var user : SignUpModel = SignUpModel()
-            Firebase.firestore.collection("users").document(Firebase.auth.uid!!).get().addOnSuccessListener {
-                user = it.toObject(SignUpModel :: class.java)!!
-            }.await()
+        return try {
+            var user: SignUpModel = SignUpModel()
+            Firebase.firestore.collection("users").document(Firebase.auth.uid!!).get()
+                .addOnSuccessListener {
+                    user = it.toObject(SignUpModel::class.java)!!
+                }.await()
             postModel.username = user.username
 //            postModel.date =
-            Firebase.firestore.collection("posts").document(UUID.randomUUID().toString()).set(postModel).await()
+            Firebase.firestore.collection("posts").document(UUID.randomUUID().toString())
+                .set(postModel).await()
             Response.Success("Success")
 
-        }catch (e :Exception){
+        } catch (e: Exception) {
             Response.Error(e.message.toString())
         }
     }

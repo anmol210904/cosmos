@@ -17,18 +17,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,7 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 fun EarthScreen(
     navHostController: NavHostController = rememberNavController(),
 
-) {
+    ) {
 
     val viewModel: EarthViewModel = koinViewModel()
 
@@ -69,24 +73,41 @@ fun EarthScreen(
         mutableStateOf("")
     }
 
+    var isloading by remember {
+        mutableStateOf(false)
+    }
+
+    var image: String = ""
+
     val calendarState = rememberUseCaseState()
 
     data?.let {
-        when(data){
-            is Response.Success ->{
-               Log.d("EARTH_SCREEN",it.data?.url.toString())
-                Log.d("EARTH_SCREEN","err")
+        when (data) {
+            is Response.Success -> {
+                Log.d("EARTH_SCREEN", it.data?.url.toString())
+                Log.d("EARTH_SCREEN", "err")
+                isloading = false
+                image = it.data?.url.toString()
 
             }
 
             is Response.Error -> {
-                Log.d("EARTH_SCREEN","error")
+                Log.d("EARTH_SCREEN", "error")
+                isloading = false
+                Toast.makeText(
+                    LocalContext.current,
+                    "No data for the given date",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+
             is Response.Loading -> {
-                Log.d("EARTH_SCREEN","loading")
+                Log.d("EARTH_SCREEN", "loading")
+                isloading = true
 
             }
-            null -> {}
+
+            else -> {}
         }
     }
 
@@ -131,7 +152,6 @@ fun EarthScreen(
         //longitude input 
 
 
-
         Spacer(modifier = Modifier.size(24.dp))
 
 
@@ -164,7 +184,7 @@ fun EarthScreen(
                 .fillMaxWidth(1f)
                 .padding(horizontal = 64.dp),
             onClick = {
-                viewModel.getData(longitude = long.value, latitude = lat.value,date=date.value)
+                viewModel.getData(longitude = long.value, latitude = lat.value, date = date.value)
             }
         ) {
 
@@ -176,19 +196,25 @@ fun EarthScreen(
         Spacer(modifier = Modifier.size(32.dp))
         // Image View
 
-        AsyncImage(
-            model = data?.data?.url, contentDescription = null,
-            modifier = if(false) Modifier
-                .fillMaxWidth(1f)
-                .wrapContentHeight() else Modifier
-                .fillMaxWidth(1f)
-                .height(300.dp)
-                .clip(
-                    RoundedCornerShape(32.dp)
+        if (!isloading) {
+            AsyncImage(
+                model = image, contentDescription = null,
+                modifier = if (false) Modifier
+                    .fillMaxWidth(1f)
+                    .wrapContentHeight() else Modifier
+                    .fillMaxWidth(1f)
+                    .height(300.dp)
+                    .clip(
+                        RoundedCornerShape(32.dp)
+                    )
+                    .background(color = Color.LightGray),
+                contentScale = ContentScale.FillWidth,
+
+
                 )
-                .background(color = Color.LightGray),
-            contentScale = ContentScale.FillWidth
-        )
+        } else {
+            CircularProgressIndicator(color = Color.Black)
+        }
 
 
     }

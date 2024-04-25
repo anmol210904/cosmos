@@ -210,9 +210,11 @@ fun MyProfileScreen(mainNavController: NavHostController = rememberNavController
 
 
                 LazyColumn(state = postsScrollState) {
-                    items(posts!!) {
-                        PostView(it) {
-                            mainNavController.navigate(NavItem.Post.screen_route + "/${it.postId}")
+                    if(posts != null){
+                        items(posts!!) {
+                            PostView(it) {
+                                mainNavController.navigate(NavItem.Post.screen_route + "/${it.postId}")
+                            }
                         }
                     }
                 }

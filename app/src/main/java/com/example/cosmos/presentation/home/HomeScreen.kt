@@ -1,6 +1,7 @@
 package com.example.cosmos.presentation.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -55,6 +56,7 @@ fun HomeScreen(mainNavController: NavHostController) {
                                 restoreState = true
                             }
                         })
+                        Log.d("HOME_SCREEN",it.postId)
                         Spacer(modifier = Modifier.size(8.dp))
                         Divider()
                     }

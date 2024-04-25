@@ -72,7 +72,7 @@ fun PostView(
                     )
             )
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = post.username, fontFamily =  FontFamily.Serif)
+            Text(text = post.username, fontFamily = FontFamily.Serif)
 
         }
         Spacer(modifier = Modifier.size(8.dp))
@@ -80,13 +80,17 @@ fun PostView(
         //media
 
 
-        Column(modifier = Modifier
-            .fillMaxWidth(1f)
-            .clickable { onClickAction() },
-            horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(1f)
+                .clickable {
+                    onClickAction()
+                           },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             AsyncImage(
                 model = post.img, contentDescription = null, modifier = Modifier
-                        .fillMaxWidth()
+                    .fillMaxWidth()
                     .clip(
                         RoundedCornerShape(8.dp)
                     ),
